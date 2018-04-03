@@ -93,7 +93,8 @@ namespace GoogleMarkers {
                 } else
                     MessageBox.Show("Destination \"" + tb_find_place.Text + "\" could not be found.", "Bad destination request...", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            ((KeyEventArgs)e).SuppressKeyPress = true;
+            if (Equals(e.GetType(), typeof(KeyEventArgs)))
+                ((KeyEventArgs)e).SuppressKeyPress = true;
         }
 
         private void Form1_Load(object sender, EventArgs e) {
