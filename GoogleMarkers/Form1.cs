@@ -379,7 +379,8 @@ namespace GoogleMarkers {
 
             ToolStripMenuItem _section = new ToolStripMenuItem {
                 Name = "Markers",
-                Text = "Markers"
+                Text = "Markers",
+                DropDownDirection = ToolStripDropDownDirection.BelowRight
             };
             menuStrip1.Items.Add(_section);
             foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
@@ -393,6 +394,7 @@ namespace GoogleMarkers {
                 _t.MouseLeave += MarkerMenuStrip_Leave;
                 _section.DropDownItems.Add(_t);
             }
+            _section.DropDown.MaximumSize = new Size(_section.DropDown.Width, mymap.Height/3);
         }
         private void MarkerMenuStrip_Leave(object sender, EventArgs e) {
             foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
