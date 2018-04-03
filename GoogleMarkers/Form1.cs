@@ -146,8 +146,6 @@ namespace GoogleMarkers {
                 return;
             }
             StreamReader reader = new StreamReader(csvDir);
-            int counter = 0;
-            int total = 0;
             List<string> notFound = new List<string>();
             do
             {
