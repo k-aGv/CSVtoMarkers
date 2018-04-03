@@ -126,6 +126,7 @@ namespace GoogleMarkers {
         private void AddMarkersFromCSV()
         {
             string csvDir="";
+            openFileDialog1.FileName = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 csvDir = openFileDialog1.FileName;
@@ -183,14 +184,21 @@ namespace GoogleMarkers {
                 bool _found = false;
                 while (i < 50 && !_found) {
                     var coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode _e);
+                    var _tmpCoords = new Placemark?();
+                    if (coords.HasValue)
+                        _tmpCoords = GMapProviders.GoogleMap.GetPlacemark(coords.Value, out GeoCoderStatusCode _geo);
                 
-                    if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
+                    if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
                     {
-                        mymap.SetPositionByKeywords(dir);
-                        mymap.Zoom = 10;
+                        //mymap.SetPositionByKeywords(dir);
+                        //mymap.Zoom = 10;
 
                         PointLatLng points = new PointLatLng(coords.Value.Lat, coords.Value.Lng);
                         GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
+                        
+                        marker.Tag = _tmpCoords.Value.Address;
+                        marker.ToolTipText = _tmpCoords.Value.Address;
+                        marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                         markers_overlay.Markers.Add(marker);
 
@@ -205,12 +213,17 @@ namespace GoogleMarkers {
                        // MessageBox.Show("failed once.." + dir + "'");
                         dir = FirstLetterToUpper(dir);
                         coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode __e);
-                        if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
+                        if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
                         {
-                            mymap.SetPositionByKeywords(dir);
-                            mymap.Zoom = 10;
+                            //mymap.SetPositionByKeywords(dir);
+                            //mymap.Zoom = 10;
                             PointLatLng points = new PointLatLng(coords.Value.Lat, coords.Value.Lng);
                             GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
+
+                            marker.Tag = _tmpCoords.Value.Address;
+                            marker.ToolTipText = _tmpCoords.Value.Address;
+                            marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+
                             markers_overlay.Markers.Add(marker);
 
                             mymap.UpdateMarkerLocalPosition(marker);
@@ -226,7 +239,7 @@ namespace GoogleMarkers {
                     }
                     i++;
                 }
-
+                mymap.SetZoomToFitRect(mymap.GetRectOfAllMarkers(mymap.Overlays[0].Id).Value);
                 Application.DoEvents();
             } while (!reader.EndOfStream);
 
