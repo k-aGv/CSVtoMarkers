@@ -30,8 +30,7 @@ namespace GoogleMarkers {
             btn_find_place = new Button {
                 AutoSize = true,
                 Name = "btn_find_place",
-                Text = "Find place",
-                Location = new Point(mymap.Location.X, mymap.Location.Y + mymap.Height + 5)
+                Text = "Find place"
             };
             btn_find_place.Click += Btn_find_place_Click;
 
@@ -39,11 +38,17 @@ namespace GoogleMarkers {
             tb_find_place = new TextBox {
                 Width = 250,
                 Name = "tb_find_place",
-                Text = "Type destination",
-                Location = new Point(btn_find_place.Location.X + btn_find_place.Width + 10,
-                                     btn_find_place.Location.Y + 2),
-
+                Text = "Type destination"
             };
+            
+            tb_find_place.Location = new Point(
+                                     Width - tb_find_place.Width - 25,
+                                     mymap.Location.Y + btn_find_place.Height + 5);
+            btn_find_place.Location = new Point(
+                                    tb_find_place.Location.X,
+                                    mymap.Location.Y);
+
+
             Controls.Add(tb_find_place);
             tb_find_place.GotFocus += tb_find_place_GotFocus;
             tb_find_place.LostFocus += tb_find_place_LostFocus;
@@ -101,8 +106,9 @@ namespace GoogleMarkers {
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
             WindowState = FormWindowState.Maximized;
-            mymap.Width = Width - (3 * mymap.Location.X);
-            mymap.Height = Height - (4 * mymap.Location.Y);
+            InitUI();
+            mymap.Width = tb_find_place.Location.X - mymap.Location.X;
+            mymap.Height = Height - mymap.Location.Y - menuStrip1.Height - 25;
 
             mymap.MapProvider = GoogleMapProvider.Instance;//using it as FULL reference to have the complete list of providers
 
@@ -119,7 +125,7 @@ namespace GoogleMarkers {
 
             CreateHiddenDir();
             LoadMarkers();
-            InitUI();
+            
             AddMarkersFromCSV();
         }
 
