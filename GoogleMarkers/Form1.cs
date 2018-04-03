@@ -88,7 +88,7 @@ namespace GoogleMarkers {
             var coords = GMapProviders.GoogleMap.GetPoint(tb_find_place.Text, out GeoCoderStatusCode _e);
             if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS)) {
                 mymap.SetPositionByKeywords(tb_find_place.Text);
-                mymap.Zoom = 10;
+                mymap.Zoom = 15;
             }
             else {
                 string _s = FirstLetterToUpper(tb_find_place.Text);
@@ -96,7 +96,7 @@ namespace GoogleMarkers {
                 coords = GMapProviders.GoogleMap.GetPoint(_s, out GeoCoderStatusCode __e);
                 if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS)) {
                     mymap.SetPositionByKeywords(tb_find_place.Text);
-                    mymap.Zoom = 10;
+                    mymap.Zoom = 15;
                 } else
                     MessageBox.Show("Destination \"" + tb_find_place.Text + "\" could not be found.", "Bad destination request...", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
