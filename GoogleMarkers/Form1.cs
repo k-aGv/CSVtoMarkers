@@ -179,10 +179,11 @@ namespace GoogleMarkers {
 
                 //  }
                 dir = dir.ToLower();
-                var coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode _e);
                 int i = 0;
-                while (i < 15)
-                {
+                bool _found = false;
+                while (i < 50 && !_found) {
+                    var coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode _e);
+                
                     if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
                     {
                         mymap.SetPositionByKeywords(dir);
@@ -196,6 +197,7 @@ namespace GoogleMarkers {
                         mymap.UpdateMarkerLocalPosition(marker);
                         mymap.Overlays.Clear();
                         mymap.Overlays.Add(markers_overlay);
+                        _found = true;
                         break;
                     }
                     else
@@ -214,18 +216,18 @@ namespace GoogleMarkers {
                             mymap.UpdateMarkerLocalPosition(marker);
                             mymap.Overlays.Clear();
                             mymap.Overlays.Add(markers_overlay);
-
-                        }
+                            _found = true;
+                        }/*
                         else
                         {
                             MessageBox.Show("Destination \"" + dir + "\" could not be found.", "Bad destination request...", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
-                        }
+                        }*/
                     }
                     i++;
                 }
-           
 
+                Application.DoEvents();
             } while (!reader.EndOfStream);
 
         }
