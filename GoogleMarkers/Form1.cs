@@ -24,6 +24,8 @@ namespace GoogleMarkers {
 
         GMapOverlay markers_overlay = new GMapOverlay("markers");
         TextBox tb_find_place;
+        ListBox lbx_not_found_targets;
+        Label lb_listbox;
         Button btn_find_place;
 
         private void InitUI() {
@@ -245,8 +247,40 @@ namespace GoogleMarkers {
                 
             } while (!reader.EndOfStream);
             EditMarkersMenuStripItem();
+            LogTheNotFoundTargetsList(notFound);
 
         }
+
+        private void LogTheNotFoundTargetsList(List<string> missing_targets) {
+            if (missing_targets.Count == 0)
+                return;
+            lb_listbox = new Label {
+                AutoSize = true,
+                Text = "Google was unable to find the following addresses:",
+                Location = new Point(
+                    tb_find_place.Location.X, 
+                    tb_find_place.Location.Y + tb_find_place.Height + 10)
+            };
+            Controls.Add(lb_listbox);
+
+            lbx_not_found_targets = new ListBox {
+                Location = new Point(lb_listbox.Location.X, lb_listbox.Location.Y + lb_listbox.Height + 5),
+                Width = tb_find_place.Width,
+                Height = missing_targets.Count * ((int)(Font.Size * 2)),
+                MaximumSize = new Size(tb_find_place.Width, mymap.Height / 3 - (lb_listbox.Location.Y + lb_listbox.Height + 5)),
+                HorizontalScrollbar = true
+            };
+            Controls.Add(lbx_not_found_targets);
+            foreach (string _s in missing_targets) {
+                lbx_not_found_targets.Items.Add(_s);
+            }
+            lbx_not_found_targets.SelectedIndexChanged += Lbx_not_found_targets_SelectedIndexChanged;
+        }
+
+        private void Lbx_not_found_targets_SelectedIndexChanged(object sender, EventArgs e) {
+            tb_find_place.Text = ((ListBox)sender).SelectedItem.ToString();
+        }
+
         private void PlaceMarker(MouseEventArgs _e) {
             if (_e.Button == MouseButtons.Left && !mymap.IsDragging) {
 
