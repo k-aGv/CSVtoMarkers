@@ -576,5 +576,26 @@ namespace GoogleMarkers {
         private void importCsvToolStripMenuItem_Click(object sender, EventArgs e) {
             AddMarkersFromCSV();
         }
+
+        private void clearMapToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(mymap.Overlays.Count!=0) {
+                mymap.Overlays[0].Markers.Clear();
+            }
+            mymap.Overlays.Clear();
+
+            ToolStripItem[] _tmp = menuStrip1.Items.Find("Markers", false);
+            if (_tmp.Length != 0) {
+                menuStrip1.Items.RemoveAt(menuStrip1.Items.IndexOf(_tmp[0]));
+            }
+
+            if (Controls.Contains(lbx_not_found_targets)) {
+                Controls.Remove(lbx_not_found_targets);
+            }
+            if (Controls.Contains(lb_listbox)) {
+                Controls.Remove(lb_listbox);
+            }
+
+
+        }
     }
 }
