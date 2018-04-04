@@ -26,7 +26,7 @@ namespace GoogleMarkers {
         TextBox tb_find_place;
         ListBox lbx_not_found_targets;
         Label lb_listbox;
-        
+
         Button btn_find_place;
         List<ProgressBar> pb;
         List<Label> lb_progress;
@@ -45,7 +45,7 @@ namespace GoogleMarkers {
                 Name = "tb_find_place",
                 Text = "Type destination"
             };
-            
+
             tb_find_place.Location = new Point(
                                      Width - tb_find_place.Width - 25,
                                      mymap.Location.Y + btn_find_place.Height + 5);
@@ -100,7 +100,8 @@ namespace GoogleMarkers {
                 if (coords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS)) {
                     mymap.SetPositionByKeywords(tb_find_place.Text);
                     mymap.Zoom = 15;
-                } else
+                }
+                else
                     MessageBox.Show("Destination \"" + tb_find_place.Text + "\" could not be found.", "Bad destination request...", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             if (Equals(e.GetType(), typeof(KeyEventArgs)))
@@ -130,7 +131,7 @@ namespace GoogleMarkers {
 
             CreateHiddenDir();
             LoadMarkers();
-            
+
             AddMarkersFromCSV();
         }
         private ProgressBar CreateProgressBar(Point _loc, int _steps, int _width) {
@@ -142,7 +143,7 @@ namespace GoogleMarkers {
                 Value = 1,
                 Step = 1,
 
-                Location = new Point(lb_progress[lb_progress.Count-1].Location.X,lb_progress[lb_progress.Count - 1].Location.Y+lb_progress[lb_progress.Count - 1].Height-5),
+                Location = new Point(lb_progress[lb_progress.Count - 1].Location.X, lb_progress[lb_progress.Count - 1].Location.Y + lb_progress[lb_progress.Count - 1].Height - 5),
                 Width = _width
 
             };
@@ -157,17 +158,14 @@ namespace GoogleMarkers {
 
             return _label;
         }
-    
-        private void AddMarkersFromCSV()
-        {
-            string csvDir="";
+
+        private void AddMarkersFromCSV() {
+            string csvDir = "";
             openFileDialog1.FileName = "";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                 csvDir = openFileDialog1.FileName;
             }
-            else
-            {
+            else {
                 MessageBox.Show("CSV selection has been cancelled...");
                 return;
             }
@@ -176,7 +174,7 @@ namespace GoogleMarkers {
             int _csv_entries = 0;
             int _csv_index = 0;
             int _retries_index;
-            int _retries=50;
+            int _retries = 50;
 
             do {
                 _rdr.ReadLine();
@@ -192,32 +190,30 @@ namespace GoogleMarkers {
             pb = new List<ProgressBar>();
             lb_progress = new List<Label>();
             pb.Add(CreateProgressBar(
-                                    new Point(tb_find_place.Location.X,tb_find_place.Location.Y + tb_find_place.Height + 5), 
-                                    _csv_entries, 
+                                    new Point(tb_find_place.Location.X, tb_find_place.Location.Y + tb_find_place.Height + 5),
+                                    _csv_entries,
                                     tb_find_place.Width));
             pb.Add(CreateProgressBar(
                                     new Point(pb[0].Location.X, pb[0].Location.Y + pb[0].Height + 5),
                                     _retries,
-                                    tb_find_place.Width/3));
+                                    tb_find_place.Width / 3));
             Controls.Add(lb_progress[0]);
             Controls.Add(lb_progress[1]);
             Controls.Add(pb[0]);
             Controls.Add(pb[1]);
-            
-            do
-            {
+
+            do {
                 string _tmp = reader.ReadLine();
 
                 _tmp = _tmp.ToLower();
 
-                string dir = _tmp.Split(',')[1] +" "+_tmp.Split(',')[3];
+                string dir = _tmp.Split(',')[1] + " " + _tmp.Split(',')[3];
                 int price = Convert.ToInt32((_tmp.Split(',')[_tmp.Split(',').Length - 1]));
                 if (dir.Contains("τ.θ.") ||
                     dir.Contains("τ.") ||
                     dir.Contains("θ.") ||
                     dir.Contains("τθ") ||
-                    dir.Contains("τθ."))
-                {
+                    dir.Contains("τθ.")) {
                     dir.Replace("τ.θ.", "");
                     dir.Replace("τ.", "");
                     dir.Replace("θ.", "");
@@ -226,16 +222,14 @@ namespace GoogleMarkers {
 
                 }
 
-                if (dir.Contains("οδοσ"))
-                {
+                if (dir.Contains("οδοσ")) {
                     dir.Replace("οδοσ", "οδός");
                 }
 
-                if (dir.Contains("εθν.οδοσ"))
-                {
+                if (dir.Contains("εθν.οδοσ")) {
                     dir.Replace("εθν.οδοσ", "εθνική");
                 }
-                
+
                 dir = dir.ToLower();
                 _retries_index = 0;
                 bool _found = false;
@@ -245,14 +239,13 @@ namespace GoogleMarkers {
                     var _tmpCoords = new Placemark?();
                     if (coords.HasValue)
                         _tmpCoords = GMapProviders.GoogleMap.GetPlacemark(coords.Value, out GeoCoderStatusCode _geo);
-                
-                    if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
-                    {
+
+                    if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS)) {
                         PointLatLng points = new PointLatLng(coords.Value.Lat, coords.Value.Lng);
                         GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
-                        
+
                         marker.Tag = _tmpCoords.Value.Address;
-                        marker.ToolTipText = _tmpCoords.Value.Address+", Τζίρος: "+price;
+                        marker.ToolTipText = _tmpCoords.Value.Address + ", Τζίρος: " + price;
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                         markers_overlay.Markers.Add(marker);
@@ -262,12 +255,10 @@ namespace GoogleMarkers {
                         mymap.Overlays.Add(markers_overlay);
                         _found = true;
                     }
-                    else
-                    {
+                    else {
                         dir = FirstLetterToUpper(dir);
                         coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode __e);
-                        if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS))
-                        {
+                        if (_tmpCoords.HasValue && _e.Equals(GeoCoderStatusCode.G_GEO_SUCCESS)) {
                             PointLatLng points = new PointLatLng(coords.Value.Lat, coords.Value.Lng);
                             GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
 
@@ -283,17 +274,17 @@ namespace GoogleMarkers {
                         }
                     }
                     _retries_index++;
-                    lb_progress[1].Text = "Retrying request: "+_retries_index + "/" + _retries;
+                    lb_progress[1].Text = "Retrying request: " + _retries_index + "/" + _retries;
                     pb[1].PerformStep();
                     Application.DoEvents();
                 }
-                if(!_found) {
+                if (!_found) {
                     notFound.Add(dir);
                 }
                 mymap.SetZoomToFitRect(mymap.GetRectOfAllMarkers(mymap.Overlays[0].Id).Value);
 
                 _csv_index++;
-                
+
                 lb_progress[0].Text = "Completed: " + ((100 * _csv_index) / _csv_entries) + "% (Parsed Addresses: " + _csv_index + "/" + _csv_entries + ")";
                 lb_progress[1].Text = "Done";
                 pb[1].Value = pb[1].Maximum;
@@ -320,7 +311,7 @@ namespace GoogleMarkers {
                 AutoSize = true,
                 Text = "Google was unable to find the following addresses:",
                 Location = new Point(
-                    tb_find_place.Location.X, 
+                    tb_find_place.Location.X,
                     tb_find_place.Location.Y + tb_find_place.Height + 10)
             };
             Controls.Add(lb_listbox);
@@ -397,7 +388,7 @@ namespace GoogleMarkers {
                 if (mymap.Overlays[0].Markers.Count != 0) {
                     _wr = new StreamWriter(_markers);
                     foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
-                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng+"|"+ _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length-1].Replace(" ",""));
+                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng + "|" + _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length - 1].Replace(" ", ""));
                     }
                     _wr.Close();
                 }
@@ -414,7 +405,7 @@ namespace GoogleMarkers {
                         Convert.ToDouble(_tmp.Split('|')[2])
                         );
                     GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(final, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
-                    marker.ToolTipText = _tmp.Split('|')[0]+", Τζίρος: "+_tmp.Split('|')[3];
+                    marker.ToolTipText = _tmp.Split('|')[0] + ", Τζίρος: " + _tmp.Split('|')[3];
                     marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                     marker.Tag = _tmp.Split('|')[0];
                     markers_overlay.Markers.Add(marker);
@@ -456,7 +447,7 @@ namespace GoogleMarkers {
                 _t.MouseLeave += MarkerMenuStrip_Leave;
                 _section.DropDownItems.Add(_t);
             }
-            _section.DropDown.MaximumSize = new Size(_section.DropDown.Width, mymap.Height/3);
+            _section.DropDown.MaximumSize = new Size(_section.DropDown.Width, mymap.Height / 3);
         }
         private void MarkerMenuStrip_Leave(object sender, EventArgs e) {
             foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
@@ -473,7 +464,7 @@ namespace GoogleMarkers {
                     _m.ToolTipMode = MarkerTooltipMode.Always;
                     mymap.Refresh();
                 }
-            }            
+            }
         }
 
         private void MarkerMenuStrip_Click(object sender, EventArgs e) {
@@ -498,8 +489,7 @@ namespace GoogleMarkers {
                 PlaceMarker(e);
             _clickHandled = false;
         }
-        public static Bitmap takeComponentScreenShot(Control control)
-        {
+        public static Bitmap takeComponentScreenShot(Control control) {
             Rectangle rect = control.RectangleToScreen(control.DisplayRectangle);
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bmp);
@@ -507,8 +497,7 @@ namespace GoogleMarkers {
             return bmp;
         }
 
-        private void saveImageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void saveImageToolStripMenuItem_Click(object sender, EventArgs e) {
             mymap.ShowCenter = false;
             mymap.Refresh();
             string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap_" + DateTime.Now.Ticks + ".png";
@@ -523,7 +512,7 @@ namespace GoogleMarkers {
         private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
             SaveMarkers();
         }
-        
+
         private void mymap_OnMarkerClick(GMapMarker item, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 FocusMarker(item);
@@ -532,7 +521,7 @@ namespace GoogleMarkers {
             else {
                 _clickHandled = false;
                 RemoveMarker(item, e);
-               
+
             }
         }
     }
