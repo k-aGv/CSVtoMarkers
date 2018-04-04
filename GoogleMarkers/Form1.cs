@@ -146,6 +146,8 @@ namespace GoogleMarkers {
                 return;
             }
             StreamReader reader = new StreamReader(csvDir);
+            for (int i = 0; i < 6; i++) //skip the "csv headers"
+                reader.ReadLine();
             List<string> notFound = new List<string>();
             do
             {
