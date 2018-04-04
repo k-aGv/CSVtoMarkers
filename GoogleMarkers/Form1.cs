@@ -26,7 +26,10 @@ namespace GoogleMarkers {
         TextBox tb_find_place;
         ListBox lbx_not_found_targets;
         Label lb_listbox;
+        
         Button btn_find_place;
+        List<ProgressBar> pb;
+        List<Label> lb_progress;
 
         private void InitUI() {
             btn_find_place = new Button {
@@ -130,7 +133,30 @@ namespace GoogleMarkers {
             
             AddMarkersFromCSV();
         }
+        private ProgressBar CreateProgressBar(Point _loc, int _steps, int _width) {
+            lb_progress.Add(CreateProgressBarLabel(_loc));
 
+            ProgressBar progressBar = new ProgressBar {
+                Minimum = 1,
+                Maximum = _steps,
+                Value = 1,
+                Step = 1,
+
+                Location = new Point(lb_progress[lb_progress.Count-1].Location.X,lb_progress[lb_progress.Count - 1].Location.Y+lb_progress[lb_progress.Count - 1].Height-5),
+                Width = _width
+
+            };
+            return progressBar;
+        }
+
+        private Label CreateProgressBarLabel(Point _loc) {
+            Label _label = new Label {
+                Location = _loc,
+                AutoSize = true
+            };
+
+            return _label;
+        }
     
         private void AddMarkersFromCSV()
         {
@@ -145,10 +171,39 @@ namespace GoogleMarkers {
                 MessageBox.Show("CSV selection has been cancelled...");
                 return;
             }
+            StreamReader _rdr = new StreamReader(csvDir);
+
+            int _csv_entries = 0;
+            int _csv_index = 0;
+            int _retries_index;
+            int _retries=50;
+
+            do {
+                _rdr.ReadLine();
+                _csv_entries++;
+            } while (!_rdr.EndOfStream);
+            _rdr.Close();
+            _csv_entries -= 6;
+
             StreamReader reader = new StreamReader(csvDir);
             for (int i = 0; i < 6; i++) //skip the "csv headers"
                 reader.ReadLine();
             List<string> notFound = new List<string>();
+            pb = new List<ProgressBar>();
+            lb_progress = new List<Label>();
+            pb.Add(CreateProgressBar(
+                                    new Point(tb_find_place.Location.X,tb_find_place.Location.Y + tb_find_place.Height + 5), 
+                                    _csv_entries, 
+                                    tb_find_place.Width));
+            pb.Add(CreateProgressBar(
+                                    new Point(pb[0].Location.X, pb[0].Location.Y + pb[0].Height + 5),
+                                    _retries,
+                                    tb_find_place.Width/3));
+            Controls.Add(lb_progress[0]);
+            Controls.Add(lb_progress[1]);
+            Controls.Add(pb[0]);
+            Controls.Add(pb[1]);
+            
             do
             {
                 string _tmp = reader.ReadLine();
@@ -180,19 +235,12 @@ namespace GoogleMarkers {
                 {
                     dir.Replace("εθν.οδοσ", "εθνική");
                 }
-
-
-
-                // bool containsNumber = System.Text.RegularExpressions.Regex.IsMatch(dir, @"\d");
-                // if (containsNumber)
-                //  {
-
-                //  }
-                dir = dir.ToLower();
-                int i = 0;
-                bool _found = false;
                 
-                while (i < 50 && !_found) {
+                dir = dir.ToLower();
+                _retries_index = 0;
+                bool _found = false;
+                pb[1].Value = 1;
+                while (_retries_index < _retries && !_found) {
                     var coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode _e);
                     var _tmpCoords = new Placemark?();
                     if (coords.HasValue)
@@ -234,16 +282,33 @@ namespace GoogleMarkers {
                             mymap.Overlays.Add(markers_overlay);
                         }
                     }
-                    i++;
+                    _retries_index++;
+                    lb_progress[1].Text = "Retrying request: "+_retries_index + "/" + _retries;
+                    pb[1].PerformStep();
                     Application.DoEvents();
                 }
                 if(!_found) {
                     notFound.Add(dir);
                 }
                 mymap.SetZoomToFitRect(mymap.GetRectOfAllMarkers(mymap.Overlays[0].Id).Value);
+
+                _csv_index++;
                 
+                lb_progress[0].Text = "Completed: " + ((100 * _csv_index) / _csv_entries) + "% (Parsed Addresses: " + _csv_index + "/" + _csv_entries + ")";
+                lb_progress[1].Text = "Done";
+                pb[1].Value = pb[1].Maximum;
+                pb[0].PerformStep();
+                Application.DoEvents();
+
             } while (!reader.EndOfStream);
             EditMarkersMenuStripItem();
+            MessageBox.Show("Finding process is completed.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Controls.Remove(pb[0]);
+            Controls.Remove(pb[1]);
+            Controls.Remove(lb_progress[1]);
+            Controls.Remove(lb_progress[0]);
+            pb.Clear();
+            lb_progress.Clear();
             LogTheNotFoundTargetsList(notFound);
 
         }
