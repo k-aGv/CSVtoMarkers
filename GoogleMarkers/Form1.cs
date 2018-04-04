@@ -332,7 +332,7 @@ namespace GoogleMarkers {
                 if (mymap.Overlays[0].Markers.Count != 0) {
                     _wr = new StreamWriter(_markers);
                     foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
-                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng);
+                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng+"|"+ _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length-1].Replace(" ",""));
                     }
                     _wr.Close();
                 }
@@ -349,7 +349,7 @@ namespace GoogleMarkers {
                         Convert.ToDouble(_tmp.Split('|')[2])
                         );
                     GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(final, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
-                    marker.ToolTipText = _tmp.Split('|')[0];
+                    marker.ToolTipText = _tmp.Split('|')[0]+", Τζίρος: "+_tmp.Split('|')[3];
                     marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                     marker.Tag = _tmp.Split('|')[0];
                     markers_overlay.Markers.Add(marker);
