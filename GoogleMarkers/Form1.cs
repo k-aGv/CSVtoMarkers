@@ -130,9 +130,9 @@ namespace GoogleMarkers {
             mymap.InvertedMouseWheelZooming = false;
 
             CreateHiddenDir();
-            LoadMarkers();
+            //LoadMarkers();
 
-            AddMarkersFromCSV();
+            //AddMarkersFromCSV();
         }
         private ProgressBar CreateProgressBar(Point _loc, int _steps, int _width) {
             lb_progress.Add(CreateProgressBarLabel(_loc));
@@ -162,19 +162,29 @@ namespace GoogleMarkers {
         private void AddMarkersFromCSV() {
             string csvDir = "";
             openFileDialog1.FileName = "";
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+            openFileDialog1.Title = "Open CSV file...";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 csvDir = openFileDialog1.FileName;
-            }
-            else {
-                MessageBox.Show("CSV selection has been cancelled...");
+            else
                 return;
-            }
+
             StreamReader _rdr = new StreamReader(csvDir);
+
+            if (mymap.Overlays.Count != 0)
+                mymap.Overlays[0].Markers.Clear();
+
+            if (Controls.Contains(lbx_not_found_targets)) {
+                Controls.Remove(lbx_not_found_targets);
+            }
+            if (Controls.Contains(lb_listbox)) {
+                Controls.Remove(lb_listbox);
+            }
+
 
             int _csv_entries = 0;
             int _csv_index = 0;
             int _retries_index;
-            int _retries = 50;
+            int _retries = 2;
 
             do {
                 _rdr.ReadLine();
@@ -384,17 +394,51 @@ namespace GoogleMarkers {
             if (File.Exists(_markers))
                 File.Delete(_markers);
             StreamWriter _wr;
+            int _c = 0;
             if (mymap.Overlays.Count != 0) {
                 if (mymap.Overlays[0].Markers.Count != 0) {
                     _wr = new StreamWriter(_markers);
                     foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
                         _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng + "|" + _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length - 1].Replace(" ", ""));
+                        _c++;
                     }
                     _wr.Close();
                 }
             }
+            SaveFileDialog _sfd = new SaveFileDialog();
+            _sfd.FileName = "";
+            _sfd.InitialDirectory = Directory.GetCurrentDirectory();
+            if (_c == 0) {
+                MessageBox.Show("No markers placed to save.", "Empty map...", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            
+            if(_sfd.ShowDialog() == DialogResult.OK) {
+                File.Copy(_markers, _sfd.FileName);
+            }
         }
         private void LoadMarkers() {
+
+            if(Controls.Contains(lbx_not_found_targets)) {
+                Controls.Remove(lbx_not_found_targets);
+            }
+            if (Controls.Contains(lb_listbox)) {
+                Controls.Remove(lb_listbox);
+            }
+
+            OpenFileDialog _ofd = new OpenFileDialog();
+            _ofd.FileName = "";
+            _ofd.Title = "Open markers file...";
+            if (_ofd.ShowDialog() == DialogResult.OK) {
+                _markers = _ofd.FileName;
+            }
+            else
+                return;
+
+            if(mymap.Overlays.Count!=0)
+                mymap.Overlays[0].Markers.Clear();
+            mymap.Overlays.Clear();
+
             StreamReader _r;
             if (File.Exists(_markers)) {
                 _r = new StreamReader(_markers);
@@ -497,7 +541,19 @@ namespace GoogleMarkers {
             return bmp;
         }
 
-        private void saveImageToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void mymap_OnMarkerClick(GMapMarker item, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                FocusMarker(item);
+                _clickHandled = true;
+            }
+            else {
+                _clickHandled = false;
+                RemoveMarker(item, e);
+
+            }
+        }
+
+        private void screenshotToolStripMenuItem1_Click(object sender, EventArgs e) {
             mymap.ShowCenter = false;
             mymap.Refresh();
             string bigImage = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + Path.DirectorySeparatorChar + "GMap_" + DateTime.Now.Ticks + ".png";
@@ -509,20 +565,16 @@ namespace GoogleMarkers {
             mymap.Refresh();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) {
             SaveMarkers();
         }
 
-        private void mymap_OnMarkerClick(GMapMarker item, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Left) {
-                FocusMarker(item);
-                _clickHandled = true;
-            }
-            else {
-                _clickHandled = false;
-                RemoveMarker(item, e);
+        private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+            LoadMarkers();
+        }
 
-            }
+        private void importCsvToolStripMenuItem_Click(object sender, EventArgs e) {
+            AddMarkersFromCSV();
         }
     }
 }
