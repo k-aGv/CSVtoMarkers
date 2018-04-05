@@ -184,7 +184,7 @@ namespace GoogleMarkers {
             int _csv_entries = 0;
             int _csv_index = 0;
             int _retries_index;
-            int _retries = 2;
+            int _retries = 50;
 
             do {
                 _rdr.ReadLine();
@@ -244,7 +244,7 @@ namespace GoogleMarkers {
                 _retries_index = 0;
                 bool _found = false;
                 pb[1].Value = 1;
-                while (_retries_index < _retries && !_found) {
+                while (!_found) {
                     var coords = GMapProviders.GoogleMap.GetPoint(dir, out GeoCoderStatusCode _e);
                     var _tmpCoords = new Placemark?();
                     if (coords.HasValue)
@@ -283,6 +283,8 @@ namespace GoogleMarkers {
                             mymap.Overlays.Add(markers_overlay);
                         }
                     }
+                    if (_retries_index >= _retries)
+                        break;
                     _retries_index++;
                     lb_progress[1].Text = "Retrying request: " + _retries_index + "/" + _retries;
                     pb[1].PerformStep();
@@ -294,7 +296,6 @@ namespace GoogleMarkers {
                 mymap.SetZoomToFitRect(mymap.GetRectOfAllMarkers(mymap.Overlays[0].Id).Value);
 
                 _csv_index++;
-
                 lb_progress[0].Text = "Completed: " + ((100 * _csv_index) / _csv_entries) + "% (Parsed Addresses: " + _csv_index + "/" + _csv_entries + ")";
                 lb_progress[1].Text = "Done";
                 pb[1].Value = pb[1].Maximum;
@@ -303,10 +304,10 @@ namespace GoogleMarkers {
 
             } while (!reader.EndOfStream);
             EditMarkersMenuStripItem();
-            MessageBox.Show("Finding process is completed.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Controls.Remove(pb[0]);
             Controls.Remove(pb[1]);
             Controls.Remove(lb_progress[1]);
+            MessageBox.Show("Finding process is completed.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Controls.Remove(pb[0]);
             Controls.Remove(lb_progress[0]);
             pb.Clear();
             lb_progress.Clear();
