@@ -262,7 +262,7 @@ namespace GoogleMarkers {
                         GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
 
                         marker.Tag = _tmpCoords.Value.Address;
-                        marker.ToolTipText = _tmpCoords.Value.Address + ", Τζίρος: " + price;
+                        marker.ToolTipText = _tmpCoords.Value.Address + ", Turnover: " + price;
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                         markers_overlay.Markers.Add(marker);
@@ -280,7 +280,7 @@ namespace GoogleMarkers {
                             GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
 
                             marker.Tag = _tmpCoords.Value.Address;
-                            marker.ToolTipText = _tmpCoords.Value.Address + ", Τζίρος: " + price;
+                            marker.ToolTipText = _tmpCoords.Value.Address + ", Turnover: " + price;
                             marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                             markers_overlay.Markers.Add(marker);
@@ -416,7 +416,10 @@ namespace GoogleMarkers {
                 if (mymap.Overlays[0].Markers.Count != 0) {
                     _wr = new StreamWriter(_markers);
                     foreach (GMapMarker _m in mymap.Overlays[0].Markers) {
-                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng + "|" + _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length - 1].Replace(" ", ""));
+                        string turnover = _m.ToolTipText.Contains("Turnover") ?
+                            "|" + _m.ToolTipText.Split(':')[_m.ToolTipText.Split(':').Length - 1].Replace(" ", "") :
+                            "";
+                        _wr.WriteLine(_m.Tag + "|" + _m.Position.Lat + "|" + _m.Position.Lng + turnover);
                         _c++;
                     }
                     _wr.Close();
@@ -473,7 +476,8 @@ namespace GoogleMarkers {
                         Convert.ToDouble(_tmp.Split('|')[2])
                         );
                     GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(final, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
-                    marker.ToolTipText = _tmp.Split('|')[0] + ", Τζίρος: " + _tmp.Split('|')[3];
+                    string turnover = _tmp.Split('|').Length > 3 ? ", Turnover: " + _tmp.Split('|')[3] : "";
+                    marker.ToolTipText = _tmp.Split('|')[0] + turnover;
                     marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
                     marker.Tag = _tmp.Split('|')[0];
                     markers_overlay.Markers.Add(marker);
