@@ -359,16 +359,25 @@ namespace GoogleMarkers {
                         mymap.FromLocalToLatLng(_e.X, _e.Y).Lat,
                         mymap.FromLocalToLatLng(_e.X, _e.Y).Lng
                         );
-
-                GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(final, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
-                GeoCoderStatusCode status;
-                var _tmp = GMapProviders.GoogleSatelliteMap.GetPlacemark(final, out status);
-                if (status == GeoCoderStatusCode.G_GEO_SUCCESS) {
-                    marker.Tag = _tmp.Value.Address;
-                    marker.ToolTipText = _tmp.Value.Address;
-                    marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
-                }
-                else {
+                GMapMarker marker;
+                bool accepted = false;
+                int retries = 10;
+                int retries_index = 0;
+                do {
+                    marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(final, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
+                    GeoCoderStatusCode status;
+                    var _tmp = GMapProviders.GoogleSatelliteMap.GetPlacemark(final, out status);
+                    if (status == GeoCoderStatusCode.G_GEO_SUCCESS) {
+                        marker.Tag = _tmp.Value.Address;
+                        marker.ToolTipText = _tmp.Value.Address;
+                        marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                        accepted = true;
+                    }
+                    retries_index++;
+                    if (retries_index >= retries)
+                        break;
+                } while (!accepted);
+                if(!accepted){
                     MessageBox.Show("Could not obtain address of Marker from Google. Please try again", "Unsuccessful request", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
