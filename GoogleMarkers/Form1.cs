@@ -163,11 +163,16 @@ namespace GoogleMarkers {
             string csvDir = "";
             openFileDialog1.FileName = "";
             openFileDialog1.Title = "Open CSV file...";
+            openFileDialog1.Filter = "CSV Files(*.csv)|*.csv";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 csvDir = openFileDialog1.FileName;
             else
                 return;
 
+            if (csvDir.Split('.')[csvDir.Split('.').Length - 1] != "csv") {
+                MessageBox.Show("You have chosen an incorrect file.\nOnly CSV files are compatible with this application.", "Incorrect file type", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             StreamReader _rdr = new StreamReader(csvDir);
 
             if (mymap.Overlays.Count != 0)
