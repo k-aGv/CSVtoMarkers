@@ -134,7 +134,7 @@ namespace GoogleMarkers {
 
             //AddMarkersFromCSV();
         }
-        private ProgressBar CreateProgressBar(Point _loc, int _steps, int _width) {
+        private ProgressBar CreateProgressBar(Point _loc, double _OfsetMultiplier, int _steps, int _width) {
             lb_progress.Add(CreateProgressBarLabel(_loc));
 
             ProgressBar progressBar = new ProgressBar {
@@ -143,7 +143,7 @@ namespace GoogleMarkers {
                 Value = 1,
                 Step = 1,
 
-                Location = new Point(lb_progress[lb_progress.Count - 1].Location.X, lb_progress[lb_progress.Count - 1].Location.Y + lb_progress[lb_progress.Count - 1].Height - 5),
+                Location = new Point(lb_progress[lb_progress.Count - 1].Location.X, Convert.ToInt32(lb_progress[lb_progress.Count - 1].Location.Y + (lb_progress[lb_progress.Count - 1].Height * _OfsetMultiplier) - 5)),
                 Width = _width
 
             };
@@ -201,10 +201,12 @@ namespace GoogleMarkers {
             lb_progress = new List<Label>();
             pb.Add(CreateProgressBar(
                                     new Point(tb_find_place.Location.X, tb_find_place.Location.Y + tb_find_place.Height + 5),
+                                    1,
                                     _csv_entries,
                                     tb_find_place.Width));
             pb.Add(CreateProgressBar(
                                     new Point(pb[0].Location.X, pb[0].Location.Y + pb[0].Height + 5),
+                                    1.5,
                                     _retries,
                                     tb_find_place.Width / 3));
             Controls.Add(lb_progress[0]);
@@ -286,7 +288,7 @@ namespace GoogleMarkers {
                     if (_retries_index >= _retries)
                         break;
                     _retries_index++;
-                    lb_progress[1].Text = "Retrying request: " + _retries_index + "/" + _retries;
+                    lb_progress[1].Text = "Retrying request: " + _retries_index + "/" + _retries + "\n" + dir;
                     pb[1].PerformStep();
                     Application.DoEvents();
                 }
