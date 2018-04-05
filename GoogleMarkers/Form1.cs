@@ -225,7 +225,7 @@ namespace GoogleMarkers {
                 _tmp = _tmp.ToLower();
 
                 string dir = _tmp.Split(',')[1] + " " + _tmp.Split(',')[3];
-                int price = Convert.ToInt32((_tmp.Split(',')[_tmp.Split(',').Length - 1]));
+                string turnover = _tmp.Split(',').Length > 4 ? ", Turnover: " + _tmp.Split(',')[_tmp.Split(',').Length - 1] : "";
                 if (dir.Contains("τ.θ.") ||
                     dir.Contains("τ.") ||
                     dir.Contains("θ.") ||
@@ -262,7 +262,7 @@ namespace GoogleMarkers {
                         GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
 
                         marker.Tag = _tmpCoords.Value.Address;
-                        marker.ToolTipText = _tmpCoords.Value.Address + ", Turnover: " + price;
+                        marker.ToolTipText = _tmpCoords.Value.Address + turnover;
                         marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                         markers_overlay.Markers.Add(marker);
@@ -280,7 +280,7 @@ namespace GoogleMarkers {
                             GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(points, GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green);
 
                             marker.Tag = _tmpCoords.Value.Address;
-                            marker.ToolTipText = _tmpCoords.Value.Address + ", Turnover: " + price;
+                            marker.ToolTipText = _tmpCoords.Value.Address + turnover;
                             marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
 
                             markers_overlay.Markers.Add(marker);
