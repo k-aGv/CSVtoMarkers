@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.mymap = new GMap.NET.WindowsForms.GMapControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -30,10 +31,10 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.ScreenshotToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.clearMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,51 +92,51 @@
             // importCsvToolStripMenuItem
             // 
             this.importCsvToolStripMenuItem.Name = "importCsvToolStripMenuItem";
-            this.importCsvToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importCsvToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.importCsvToolStripMenuItem.Text = "Import CSV...";
             this.importCsvToolStripMenuItem.Click += new System.EventHandler(this.importCsvToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.openToolStripMenuItem.Text = "Import markers...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(163, 6);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.saveAsToolStripMenuItem.Text = "Save as markers...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // clearMapToolStripMenuItem
+            // 
+            this.clearMapToolStripMenuItem.Name = "clearMapToolStripMenuItem";
+            this.clearMapToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.clearMapToolStripMenuItem.Text = "Clear map";
+            this.clearMapToolStripMenuItem.Click += new System.EventHandler(this.clearMapToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(163, 6);
             // 
             // ScreenshotToolStripMenuItem1
             // 
             this.ScreenshotToolStripMenuItem1.Name = "ScreenshotToolStripMenuItem1";
-            this.ScreenshotToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.ScreenshotToolStripMenuItem1.Size = new System.Drawing.Size(166, 22);
             this.ScreenshotToolStripMenuItem1.Text = "Take screenshot";
             this.ScreenshotToolStripMenuItem1.Click += new System.EventHandler(this.screenshotToolStripMenuItem1_Click);
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // clearMapToolStripMenuItem
-            // 
-            this.clearMapToolStripMenuItem.Name = "clearMapToolStripMenuItem";
-            this.clearMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.clearMapToolStripMenuItem.Text = "Clear map";
-            this.clearMapToolStripMenuItem.Click += new System.EventHandler(this.clearMapToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -144,6 +145,7 @@
             this.ClientSize = new System.Drawing.Size(827, 522);
             this.Controls.Add(this.mymap);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
