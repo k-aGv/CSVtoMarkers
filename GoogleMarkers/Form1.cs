@@ -415,6 +415,7 @@ namespace GoogleMarkers {
             }
             SaveFileDialog _sfd = new SaveFileDialog();
             _sfd.FileName = "";
+            _sfd.Filter = "Marker Files(*.mrk)|*.mrk";
             _sfd.InitialDirectory = Directory.GetCurrentDirectory();
             if (_c == 0) {
                 MessageBox.Show("No markers placed to save.", "Empty map...", MessageBoxButtons.OK, MessageBoxIcon.Information);
