@@ -438,13 +438,19 @@ namespace GoogleMarkers {
             OpenFileDialog _ofd = new OpenFileDialog();
             _ofd.FileName = "";
             _ofd.Title = "Open markers file...";
+            _ofd.Filter = "Marker Files(*.mrk)|*.mrk";
             if (_ofd.ShowDialog() == DialogResult.OK) {
                 _markers = _ofd.FileName;
             }
             else
                 return;
 
-            if(mymap.Overlays.Count!=0)
+            if (_markers.Split('.')[_markers.Split('.').Length - 1] != "mrk") {
+                MessageBox.Show("You have chosen an incorrect file.\nOnly .mrk files are compatible with this application.", "Incorrect file type", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (mymap.Overlays.Count!=0)
                 mymap.Overlays[0].Markers.Clear();
             mymap.Overlays.Clear();
 
