@@ -49,20 +49,20 @@ namespace GoogleMarkers {
             }
 
         }
-        private void btn_apply_Click(object sender, EventArgs e) {
+        private void SaveNotes() {
             List<string> _whole_file = ReadNotes();
-            int _index=-1;
-            int _c = 0;
+            int _index = -1;
 
             if (File.Exists(Directory))
                 File.Delete(Directory);
 
-            if(_whole_file.Count!=0 || _whole_file!=null) {
+            if (_whole_file.Count != 0 || _whole_file != null) {
+                int _c = 0;
                 foreach (string _s in _whole_file) {
                     if (_s != "") {
-                        
+
                         string _tmp = _s.Replace("[", "").Replace("]", "");
-                        
+
                         if (_tmp.Split('|')[0] == Marker.Tag.ToString()) {
                             _index = _c;
                         }
@@ -93,6 +93,10 @@ namespace GoogleMarkers {
                 _wr.Write("[" + Marker.Tag.ToString() + "|" + tb_notes.Text + "]");
                 _wr.Close();
             }
+        }
+
+        private void btn_apply_Click(object sender, EventArgs e) {
+            SaveNotes();
         }
     }
 }
